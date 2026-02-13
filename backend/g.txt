@@ -1,0 +1,103 @@
+roject Documentation: Scalable Laravel 12 API + React RBAC
+Phase 1: Project Initiation (Smart Setup)
+Project Create: composer create-project laravel/laravel:^12.0 rbac-api
+
+API Scaffolding: php artisan install:api (Sanctum install kora).
+
+RBAC Package: composer require spatie/laravel-permission install kora.
+
+Architecture Preparation: app/Services, app/Repositories, app/Interfaces, and app/Traits folder-gulo manually create kora.
+
+Environment: .env file-e MySQL database configure kora.
+
+Phase 2: Backend Core (Database & Architecture)
+Migrations: Users, Roles, Permissions ebong pivot table (role_user, permission_role) setup kora.
+
+Models: User model-e HasApiTokens ebong HasRoles trait add kora.
+
+Standardization: ApiResponseTrait create kora jate sob JSON response {success, message, data} format-e thake.
+
+Seeder: SuperAdmin (all permissions) ebong Manager (limited permissions) seed kora.
+
+Phase 3: Business Logic (Service-Repository Pattern)
+Repository: Database query-r jonno BaseRepository ebong UserRepository implement kora.
+
+Service Layer: Authentication (Login/Register) ebong Permission caching-er jonno separate service class banano.
+
+Validation: FormRequest class use kora ebong UserResource diye data transform kora.
+
+Phase 4: Security (Middleware & Gate)
+Custom Middleware: CheckPermission middleware banano jeta 'slug' check korbe (e.g., user_edit).
+
+SuperAdmin Bypass: AuthServiceProvider-e Gate::before setup kora.
+
+API Versioning: routes/api_v1.php file create kora.
+
+Phase 5: Frontend Development (React + Tailwind)
+Tech Stack: React (Vite), Tailwind CSS, Framer Motion, Axios, ebong Zustand (State Management).
+
+Axios Interceptor: Token management ebong 401/403 error handle kora.
+
+Protected Routes: Authenticated users ebong specific permissions-er jonno ProtectedRoute ebong PermissionGuard create kora.
+
+Dashboard Layout: Sidebar, Navbar ebong smooth page transitions (Framer Motion) implement kora.
+
+
+
+
+
+
+
+
+
+
+
+📑 Project Documentation: Laravel 12 RBAC & React Architecture
+এই ডকুমেন্টটি আপনাকে প্রজেক্টের শুরু থেকে শেষ পর্যন্ত একটি পরিষ্কার ম্যাপ প্রদান করবে।
+
+🛠 Phase 1: Environment & Initial Setup
+Project Install: composer create-project laravel/laravel:^12.0 rbac-api
+
+Database Connection: .env ফাইলে DB_DATABASE=rbac_ms এবং ইউজারনেম/পাসওয়ার্ড সেট করা।
+
+Sanctum & API: php artisan install:api কমান্ডের মাধ্যমে API সাপোর্ট এবং Sanctum টোকেন সিস্টেম চালু করা।
+
+Spatie Package: composer require spatie/laravel-permission ইন্সটল করা।
+
+Directories: app/ ফোল্ডারের ভেতর Services, Repositories, Interfaces, এবং Traits ফোল্ডারগুলো তৈরি করা।
+
+🗄 Phase 2: Database Schema & RBAC Core
+Migrations: User, Role, Permission এবং পিভট টেবিলগুলোর মাইগ্রেশন তৈরি করা।
+
+Relationships: মডেলগুলোতে belongsToMany রিলেশনশিপ সেটআপ করা।
+
+User Model: User মডেলে HasApiTokens (Sanctum) এবং HasRoles (Spatie) ইনক্লুড করা।
+
+Standard Response: একটি ApiResponseTrait তৈরি করা যাতে সব API থেকে ইউনিফর্ম ডাটা ফরম্যাট (success, message, data) পাওয়া যায়।
+
+Seeding: DatabaseSeeder-এ 'SuperAdmin' (সব পারমিশন সহ) এবং অন্যান্য রোল তৈরি করা।
+
+🧠 Phase 3: Layered Logic (Repository & Service)
+Repository Pattern: ডাটাবেস এক্সেসের জন্য UserRepository এবং ইন্টারফেস তৈরি করা।
+
+Auth Service: কন্ট্রোলারের বাইরে AuthService তৈরি করা যা রেজিস্ট্রেশন এবং লগইন লজিক হ্যান্ডেল করবে।
+
+Caching: পারফরম্যান্স বাড়ানোর জন্য PermissionService-এ পারমিশনগুলো ক্যাশ (Cache) করে রাখা।
+
+Validation: ক্লিন কোড বজায় রাখতে FormRequest ব্যবহার করা।
+
+🛡 Phase 4: Security & Middleware (Access Control)
+Custom Middleware: একটি CheckPermission মিডলওয়্যার তৈরি করা যা সরাসরি 'Slug' চেক করবে (যেমন: user_edit)।
+
+Gate Bypass: AuthServiceProvider-এ Gate::before ফাংশন ব্যবহার করে 'SuperAdmin'-কে সব অ্যাক্সেস দেওয়া।
+
+Versioning: routes/api_v1.php ফাইলে রাউটগুলো ভার্সন অনুযায়ী সাজানো।
+
+💻 Phase 5: Frontend Integration (React & State)
+Technology: React (Vite), Tailwind CSS, Framer Motion, Zustand (State), এবং Axios।
+
+Auth Store: Zustand ব্যবহার করে গ্লোবাল অথ স্টেট (Token & Permissions) ম্যানেজ করা।
+
+Axios Interceptor: প্রতি রিকোয়েস্টে হেডার হিসেবে টোকেন পাঠানো এবং ৪০১/৪০৩ এরর হ্যান্ডেল করা।
+
+Protected Routes: PermissionGuard কম্পোনেন্ট দিয়ে রাউট এবং নির্দিষ্ট ইউজার ইন্টারফেস (UI) লক করা।
