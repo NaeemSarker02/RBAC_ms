@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthService
 {
@@ -115,7 +116,12 @@ class AuthService
     public function logout(User $user): bool
     {
         // Revoke current token
-        $user->currentAccessToken()->delete();
+        /** @var PersonalAccessToken|null $token */
+        $token = $user->currentAccessToken();
+        
+        if ($token) {
+            $token->delete();
+        }
         
         return true;
     }
@@ -155,14 +161,19 @@ class AuthService
     public function refreshToken(User $user, ?string $deviceName = null): array
     {
         // Revoke current token
-        $user->currentAccessToken()->delete();
+        /** @var PersonalAccessToken|null $token */
+        $token = $user->currentAccessToken();
+        
+        if ($token) {
+            $token->delete();
+        }
 
         // Generate new token
         $tokenName = $deviceName ?? 'auth_token';
-        $token = $user->createToken($tokenName)->plainTextToken;
+        $newToken = $user->createToken($tokenName)->plainTextToken;
 
         return [
-            'token' => $token,
+            'token' => $newToken,
             'token_type' => 'Bearer',
         ];
     }
