@@ -59,3 +59,6 @@ Route::middleware(['auth:sanctum', 'active.user'])->group(function () {
             ->middleware('permission:user_edit');
     });
 });
+
+
+
