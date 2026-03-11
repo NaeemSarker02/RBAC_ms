@@ -1,217 +1,219 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard,
   Users,
   Shield,
   Key,
-  Settings,
-  BarChart3,
   FileText,
   LogOut,
   ChevronRight,
+  Circle,
+  Menu
 } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-const MotionAside = motion.aside;
-const MotionDiv = motion.div;
-
-const Sidebar = ({ isOpen }) => {
+const Sidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) => {
   const location = useLocation();
-  const navigate = useNavigate();
-  const { user, hasPermission, hasAnyPermission, isSuperAdmin, logout } = useAuthStore();
+  const { logout } = useAuthStore();
   const [expandedMenus, setExpandedMenus] = useState({});
 
+  useEffect(() => {
+    if (isCollapsed) setExpandedMenus({});
+  }, [isCollapsed]);
+
   const menuItems = [
-    { title: 'Dashboard', icon: LayoutDashboard, path: '/dashboard', permission: null },
-    // { title: 'Admin Dashboard', icon: BarChart3, path: '/dashboard/admin', permission: null, roles: ['super_admin'] },
+    { title: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
     { 
       title: 'Users', 
       icon: Users, 
-      permission: ['user_list', 'user_view'], 
-      requireAny: true,
       children: [
-        { title: 'All Users', path: '/users', permission: 'user_list' },
-        { title: 'Create User', path: '/users/create', permission: 'user_create' },
+        { title: 'All Users', path: '/users' },
+        { title: 'Create User', path: '/users/create' },
       ]
     },
     { 
       title: 'Roles', 
       icon: Shield, 
-      permission: ['role_list', 'role_view'], 
-      requireAny: true,
       children: [
-        { title: 'All Roles', path: '/roles', permission: 'role_list' },
-        { title: 'Create Role', path: '/roles/create', permission: 'role_create' },
+        { title: 'All Roles', path: '/roles' },
+        { title: 'Create Role', path: '/roles/create' },
       ]
     },
     { 
       title: 'Permissions', 
       icon: Key, 
-      permission: ['permission_list', 'permission_view'], 
-      requireAny: true,
-      children: [
-        { title: 'All Permissions', path: '/permissions', permission: 'permission_list' },
-        { title: 'Create Permission', path: '/permissions/create', permission: 'permission_create' },
-      ]
+      children: [{ title: 'All Permissions', path: '/permissions' }]
     },
-    { title: 'Reports', icon: FileText, path: '/reports', permission: 'report_view' },
-    { title: 'Settings', icon: Settings, path: '/settings', permission: 'setting_view' },
+    { title: 'Reports', icon: FileText, path: '/reports' },
   ];
 
-  const hasMenuPermission = (item) => {
-    if (isSuperAdmin()) return true;
-    if (item.roles?.length > 0) {
-      return item.roles.some(role => user?.roles?.some(r => r.slug === role));
-    }
-    if (!item.permission) return true;
-    if (Array.isArray(item.permission)) {
-      return item.requireAny ? hasAnyPermission(item.permission) : item.permission.every(p => hasPermission(p));
-    }
-    return hasPermission(item.permission);
-  };
-
-  const hasSubmenuPermission = (permission) => {
-    if (isSuperAdmin()) return true;
-    return !permission || hasPermission(permission);
-  };
-
   const toggleSubmenu = (title) => {
-    setExpandedMenus(prev => ({ ...prev, [title]: !prev[title] }));
+    if (isCollapsed) {
+      setIsCollapsed(false);
+      setExpandedMenus({ [title]: true });
+    } else {
+      setExpandedMenus(prev => ({ ...prev, [title]: !prev[title] }));
+    }
   };
 
   const isActivePath = (path) => location.pathname === path || location.pathname.startsWith(path + '/');
 
-  const handleLogout = async () => {
-    await logout();
-    navigate('/login');
-  };
+  const springTransition = { type: 'spring', stiffness: 400, damping: 32 };
 
   return (
-    <MotionAside
-      initial={false}
-      animate={{ 
-        width: isOpen ? '260px' : '0px',
-        x: isOpen ? 0 : -260,
-        opacity: isOpen ? 1 : 0 
-      }}
-      className="fixed lg:relative z-40 h-[calc(100vh-4rem)] bg-white/80 backdrop-blur-xl border-r border-gray-200/50 shadow-xl lg:shadow-none overflow-hidden"
-    >
-      <div className="flex flex-col h-full w-[260px]">
-        {/* User Profile Section - Enhanced Design */}
-        <div className="p-5 border-b border-gray-100 bg-gradient-to-br from-gray-50/50 to-white">
-          <div className="flex items-center space-x-3 group cursor-pointer">
-            <div className="relative">
-              <div className="w-11 h-11 rounded-2xl bg-gradient-primary shadow-lg flex items-center justify-center text-white font-bold text-lg transform group-hover:scale-105 transition-transform duration-300">
-                {user?.name?.charAt(0).toUpperCase()}
-              </div>
-              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-gray-900 truncate leading-tight">
-                {user?.name}
-              </p>
-              <p className="text-[11px] font-medium text-primary-600 uppercase tracking-wider mt-0.5">
-                {user?.roles?.[0]?.name || 'Member'}
-              </p>
-            </div>
-          </div>
+    <>
+      {/* Mobile Overlay */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            exit={{ opacity: 0 }}
+            onClick={() => setIsOpen(false)}
+            className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-40 lg:hidden" 
+          />
+        )}
+      </AnimatePresence>
+
+      <motion.aside
+        initial={false}
+        animate={{ 
+          width: isCollapsed ? '88px' : '280px',
+          x: isOpen || window.innerWidth >= 1024 ? 0 : -280
+        }}
+        transition={springTransition}
+        className="fixed lg:relative z-50 h-screen bg-[#0F172A] border-r border-slate-800 shadow-[20px_0_50px_rgba(0,0,0,0.2)] flex flex-col"
+      >
+        {/* Header Section */}
+        <div className="h-20 flex items-center px-6 border-b border-slate-800/50 shrink-0 relative">
+          <AnimatePresence mode="wait">
+            {!isCollapsed && (
+              <motion.div 
+                key="logo"
+                initial={{ opacity: 0, x: -10 }} 
+                animate={{ opacity: 1, x: 0 }} 
+                exit={{ opacity: 0, x: -10 }}
+                className="flex items-center space-x-3"
+              >
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-500/20">
+                  <Shield className="w-6 h-6 text-white" />
+                </div>
+                <span className="text-xl font-black text-white tracking-tighter uppercase italic">RBAC</span>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          
+          <button 
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className={`absolute top-1/2 -translate-y-1/2 p-2 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-all duration-200 hidden lg:block
+              ${isCollapsed ? 'left-1/2 -translate-x-1/2' : 'right-4'}`}
+          >
+            <Menu className="w-5 h-5" />
+          </button>
         </div>
 
-        {/* Navigation Area */}
-        <nav className="flex-1 p-4 space-y-1.5 custom-scrollbar overflow-y-auto">
+        {/* Navigation */}
+        <nav className="flex-1 px-4 py-8 space-y-1.5 overflow-y-auto no-scrollbar overflow-x-hidden">
           {menuItems.map((item) => {
-            if (!hasMenuPermission(item)) return null;
-
             const Icon = item.icon;
             const hasChildren = item.children && item.children.length > 0;
             const isExpanded = expandedMenus[item.title];
             const isActive = item.path && isActivePath(item.path);
 
             return (
-              <div key={item.title} className="space-y-1">
+              <div key={item.title} className="relative group">
                 {hasChildren ? (
                   <button
                     onClick={() => toggleSubmenu(item.title)}
-                    className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${
-                      isExpanded ? 'bg-primary-50/50 text-primary-700' : 'text-gray-600 hover:bg-gray-50'
-                    }`}
+                    className={`w-full flex items-center p-3 rounded-xl transition-all duration-200 ${
+                      isExpanded ? 'bg-slate-800/40 text-white' : 'text-slate-400 hover:bg-slate-800/30 hover:text-slate-200'
+                    } ${isCollapsed ? 'justify-center' : 'justify-between'}`}
                   >
                     <div className="flex items-center space-x-3">
-                      <Icon className={`w-5 h-5 ${isExpanded ? 'text-primary-600' : 'text-gray-400'}`} />
-                      <span>{item.title}</span>
+                      <Icon className={`w-5 h-5 shrink-0 ${isExpanded ? 'text-violet-400' : 'text-slate-500'}`} />
+                      {!isCollapsed && <span className="text-sm font-semibold tracking-wide">{item.title}</span>}
                     </div>
-                    <ChevronRight className={`w-4 h-4 transition-transform duration-300 ${isExpanded ? 'rotate-90 text-primary-600' : 'text-gray-300'}`} />
+                    {!isCollapsed && (
+                      <ChevronRight className={`w-4 h-4 transition-transform duration-300 ${isExpanded ? 'rotate-90 text-violet-400' : 'text-slate-600'}`} />
+                    )}
                   </button>
                 ) : (
                   <Link
                     to={item.path}
-                    className={`flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-bold transition-all duration-300 transform ${
+                    className={`group relative flex items-center space-x-3 p-3 rounded-xl transition-all duration-200 ${
                       isActive 
-                        ? 'bg-gradient-primary text-white shadow-premium scale-[1.02]' 
-                        : 'text-gray-600 hover:bg-gray-50 hover:translate-x-1'
-                    }`}
+                        ? 'bg-violet-600/10 text-violet-400' 
+                        : 'text-slate-400 hover:bg-slate-800/30 hover:text-slate-200'
+                    } ${isCollapsed ? 'justify-center' : ''}`}
                   >
-                    <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-gray-400 group-hover:text-primary-500'}`} />
-                    <span>{item.title}</span>
+                    <Icon className={`w-5 h-5 shrink-0 transition-colors ${isActive ? 'text-violet-400' : 'text-slate-500 group-hover:text-slate-300'}`} />
+                    {!isCollapsed && <span className="text-sm font-semibold tracking-wide">{item.title}</span>}
+                    
+                    {/* Active Indicator Bar */}
+                    {isActive && (
+                      <motion.div 
+                        layoutId="activeBar" 
+                        className="absolute left-0 w-1 h-6 bg-violet-500 rounded-r-full" 
+                      />
+                    )}
                   </Link>
                 )}
 
+                {/* Submenu */}
                 <AnimatePresence>
-                  {hasChildren && isExpanded && (
-                    <MotionDiv
-                      initial={{ height: 0, opacity: 0, x: -10 }}
-                      animate={{ height: 'auto', opacity: 1, x: 0 }}
-                      exit={{ height: 0, opacity: 0, x: -10 }}
-                      className="overflow-hidden ml-6 border-l-2 border-primary-100/50"
+                  {hasChildren && isExpanded && !isCollapsed && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }} 
+                      animate={{ height: 'auto', opacity: 1 }} 
+                      exit={{ height: 0, opacity: 0 }}
+                      className="ml-9 border-l border-slate-800/80"
                     >
-                      <div className="pl-4 py-1 space-y-1">
-                        {item.children.map((child) => {
-                          if (!hasSubmenuPermission(child.permission)) return null;
-                          const isChildActive = isActivePath(child.path);
-
-                          return (
-                            <Link
-                              key={child.path}
-                              to={child.path}
-                              className={`block px-4 py-2 rounded-lg text-xs font-bold transition-all duration-200 ${
-                                isChildActive
-                                  ? 'bg-primary-50 text-primary-700'
-                                  : 'text-gray-500 hover:text-primary-600 hover:bg-gray-50/50'
-                              }`}
-                            >
-                              {child.title}
-                            </Link>
-                          );
-                        })}
+                      <div className="pl-4 py-2 space-y-1">
+                        {item.children.map((child) => (
+                          <Link
+                            key={child.path} to={child.path}
+                            className={`flex items-center space-x-3 p-2 rounded-lg text-xs font-bold transition-all ${
+                              isActivePath(child.path) ? 'text-violet-400 bg-violet-400/5' : 'text-slate-500 hover:text-slate-200'
+                            }`}
+                          >
+                            <Circle className={`w-1.5 h-1.5 fill-current ${isActivePath(child.path) ? 'text-violet-400 shadow-[0_0_8px_rgba(167,139,250,0.6)]' : 'text-slate-600'}`} />
+                            <span>{child.title}</span>
+                          </Link>
+                        ))}
                       </div>
-                    </MotionDiv>
+                    </motion.div>
                   )}
                 </AnimatePresence>
+
+                {/* Tooltip for Collapsed State */}
+                {isCollapsed && (
+                  <div className="absolute left-full ml-4 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-slate-800 text-white text-[11px] font-bold uppercase tracking-widest rounded-md opacity-0 group-hover:opacity-100 group-hover:translate-x-0 translate-x-[-10px] pointer-events-none transition-all duration-300 z-[100] shadow-2xl border border-slate-700">
+                    {item.title}
+                    <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-slate-800 border-l border-b border-slate-700 rotate-45" />
+                  </div>
+                )}
               </div>
             );
           })}
         </nav>
 
-        {/* Footer / Logout */}
-        <div className="p-4 bg-gray-50/30 border-t border-gray-100">
-          <button
-            onClick={handleLogout}
-            className="group w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-bold text-red-500 hover:bg-red-50 transition-all duration-200"
-          >
-            <div className="p-1.5 rounded-lg bg-red-100 group-hover:bg-red-500 group-hover:text-white transition-colors">
-              <LogOut className="w-4 h-4" />
-            </div>
-            <span>Sign Out System</span>
-          </button>
+         {/* Footer Branding */}
+        <div className="p-4 border-t border-slate-800/50 text-center">
+          {!isCollapsed && <span className="text-[10px] text-slate-600 font-bold uppercase tracking-[0.3em]">Version 1.0</span>}
         </div>
-      </div>
-    </MotionAside>
+      </motion.aside>
+    </>
   );
 };
 
-Sidebar.propTypes = { isOpen: PropTypes.bool.isRequired };
+Sidebar.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  setIsOpen: PropTypes.func.isRequired,
+  isCollapsed: PropTypes.bool.isRequired,
+  setIsCollapsed: PropTypes.func.isRequired,
+};
 
 export default Sidebar;

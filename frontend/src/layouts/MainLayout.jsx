@@ -5,35 +5,45 @@ import Sidebar from '../components/layout/Sidebar';
 import Navbar from '../components/layout/Navbar';
 
 const MainLayout = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  // sidebarOpen: Mobile drawer (True/False)
+  // isCollapsed: Desktop width (80px/280px)
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const location = useLocation();
 
   return (
-    <div className="min-h-screen bg-slate-50 selection:bg-primary-100">
-      <Navbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+    <div className="flex h-screen overflow-hidden bg-slate-50/50">
+      <Sidebar 
+        isOpen={sidebarOpen} 
+        setIsOpen={setSidebarOpen} // Pass the setter for mobile overlay/close
+        isCollapsed={isCollapsed}
+        setIsCollapsed={setIsCollapsed}
+      />
 
-      <div className="flex pt-16 h-screen overflow-hidden">
-        <Sidebar isOpen={sidebarOpen} />
+      <div className="flex-1 flex flex-col relative overflow-hidden h-full">
+        <Navbar 
+          setIsOpen={setSidebarOpen} // Navbar needs to open the drawer on mobile
+          isCollapsed={isCollapsed}
+        />
 
-        <main className="flex-1 overflow-y-auto custom-scrollbar bg-transparent">
-          <div className="p-6 lg:p-10 max-w-7xl mx-auto min-h-full flex flex-col">
+        <main className="flex-1 overflow-y-auto custom-scrollbar p-4 lg:p-8">
+          <div className="max-w-7xl mx-auto min-h-full flex flex-col">
             <AnimatePresence mode="wait">
               <motion.div
                 key={location.pathname}
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -15 }}
-                transition={{ duration: 0.3 }}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
                 className="flex-1"
               >
                 <Outlet />
               </motion.div>
             </AnimatePresence>
 
-            <footer className="mt-12 py-6 border-t border-gray-200/60 text-center">
-              <p className="text-xs font-medium text-gray-400">
-                &copy; {new Date().getFullYear()} <span className="text-primary-600">RBAC Premium</span>. Engineered for Security.
-              </p>
+            <footer className="mt-auto py-8 text-center text-slate-400 text-[10px] font-bold uppercase tracking-[0.2em]">
+              &copy; {new Date().getFullYear()} 
+              <span className="text-violet-600 ml-1">RBAC Premium UI</span>
             </footer>
           </div>
         </main>

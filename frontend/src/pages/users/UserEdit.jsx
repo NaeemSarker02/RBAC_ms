@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
-import { Loader2, Save, UserCog } from 'lucide-react';
+import { Loader2, Save, UserCog, Mail, Shield, Lock, X } from 'lucide-react';
 import userApi from '../../api/userApi';
 
 const MotionDiv = motion.div;
@@ -14,190 +14,102 @@ const UserEdit = () => {
   const userId = useMemo(() => Number(id), [id]);
   const [loading, setLoading] = useState(true);
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors, isSubmitting },
-  } = useForm({
-    defaultValues: {
-      name: '',
-      email: '',
-      password: '',
-      password_confirmation: '',
-      is_active: true,
-    },
-  });
+  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm();
 
   useEffect(() => {
-    let mounted = true;
     const load = async () => {
       try {
-        setLoading(true);
         const res = await userApi.getUser(userId);
-        if (!mounted) return;
-
-        const u = res?.data;
         reset({
-          name: u?.name || '',
-          email: u?.email || '',
-          password: '',
-          password_confirmation: '',
-          is_active: !!u?.is_active,
+          name: res?.data?.name || '',
+          email: res?.data?.email || '',
+          is_active: !!res?.data?.is_active,
         });
       } catch (e) {
-        toast.error(e.message || 'Failed to load user');
-        navigate('/users', { replace: true });
-      } finally {
-        if (mounted) setLoading(false);
-      }
+        toast.error('Failed to load user credentials');
+        navigate('/users');
+      } finally { setLoading(false); }
     };
-
-    if (!Number.isFinite(userId)) {
-      navigate('/users', { replace: true });
-      return () => { };
-    }
-
     load();
-    return () => {
-      mounted = false;
-    };
-  }, [navigate, reset, userId]);
+  }, [userId, navigate, reset]);
 
   const onSubmit = async (data) => {
     try {
-      const payload = { ...data };
-
-      // Password is optional on update; avoid sending empty strings.
-      if (!payload.password) {
-        delete payload.password;
-        delete payload.password_confirmation;
-      }
-
-      const res = await userApi.updateUser(userId, payload);
-      toast.success(res.message || 'User updated successfully');
-      navigate(`/users/${userId}`, { replace: true });
-    } catch (e) {
-      toast.error(e.message || 'Failed to update user');
-    }
+      if (!data.password) { delete data.password; delete data.password_confirmation; }
+      await userApi.updateUser(userId, data);
+      toast.success('Account updated successfully');
+      navigate(`/users/${userId}`);
+    } catch (e) { toast.error(e.message); }
   };
 
   return (
-    <div>
-      <MotionDiv initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-primary-100 rounded-lg">
-            <UserCog className="w-7 h-7 text-primary-600" />
+    <MotionDiv initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-4xl mx-auto">
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center gap-4">
+          <div className="p-3 bg-premium-violet/10 rounded-2xl">
+            <UserCog className="w-8 h-8 text-premium-violet" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Edit User</h1>
-            <p className="text-gray-600 mt-1">Update user details and status</p>
+            <h1 className="text-3xl font-black text-slate-900 tracking-tight">Modify Account</h1>
+            <p className="text-slate-500 text-sm font-medium">Update profile identity and security protocols</p>
           </div>
         </div>
-      </MotionDiv>
+        <button onClick={() => navigate(-1)} className="p-2 hover:bg-slate-100 rounded-full transition-colors"><X className="w-6 h-6 text-slate-400" /></button>
+      </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <div className="premium-card p-8 bg-white">
         {loading ? (
-          <div className="py-16 flex items-center justify-center text-gray-600">
-            <Loader2 className="w-6 h-6 animate-spin mr-2" />
-            Loading user...
-          </div>
+          <div className="py-20 flex justify-center"><Loader2 className="w-8 h-8 animate-spin text-premium-violet" /></div>
         ) : (
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Name</label>
-                <input
-                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 ${errors.name ? 'border-red-300' : 'border-gray-300'
-                    }`}
-                  placeholder="John Doe"
-                  {...register('name', { required: 'Name is required' })}
-                />
-                {errors.name && <p className="mt-2 text-sm text-red-600">{errors.name.message}</p>}
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Name Field */}
+              <div className="space-y-2 group">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest group-focus-within:text-premium-violet transition-colors">Legal Name</label>
+                <div className="relative">
+                  <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300 group-focus-within:text-premium-violet transition-colors" />
+                  <input {...register('name', { required: true })} className={`premium-input w-full pl-12 pr-4 py-3.5 bg-slate-50 border rounded-xl outline-none transition-all font-semibold ${errors.name ? 'border-rose-300 ring-4 ring-rose-50' : 'border-slate-100 focus:border-premium-violet focus:ring-4 focus:ring-premium-violet/5'}`} />
+                </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Email</label>
-                <input
-                  type="email"
-                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 ${errors.email ? 'border-red-300' : 'border-gray-300'
-                    }`}
-                  placeholder="john@example.com"
-                  {...register('email', {
-                    required: 'Email is required',
-                    pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: 'Invalid email address',
-                    },
-                  })}
-                />
-                {errors.email && <p className="mt-2 text-sm text-red-600">{errors.email.message}</p>}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">New password (optional)</label>
-                <input
-                  type="password"
-                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 ${errors.password ? 'border-red-300' : 'border-gray-300'
-                    }`}
-                  placeholder="Leave blank to keep current password"
-                  {...register('password', {
-                    minLength: { value: 8, message: 'Password must be at least 8 characters' },
-                  })}
-                />
-                {errors.password && <p className="mt-2 text-sm text-red-600">{errors.password.message}</p>}
+              {/* Email Field */}
+              <div className="space-y-2 group">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest group-focus-within:text-premium-violet transition-colors">Corporate Email</label>
+                <div className="relative">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300 group-focus-within:text-premium-violet transition-colors" />
+                  <input {...register('email', { required: true })} className="premium-input w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-100 rounded-xl outline-none focus:border-premium-violet focus:ring-4 focus:ring-premium-violet/5 transition-all font-semibold" />
+                </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Confirm new password</label>
-                <input
-                  type="password"
-                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 ${errors.password_confirmation ? 'border-red-300' : 'border-gray-300'
-                    }`}
-                  placeholder="Repeat new password"
-                  {...register('password_confirmation')}
-                />
-                {errors.password_confirmation && (
-                  <p className="mt-2 text-sm text-red-600">{errors.password_confirmation.message}</p>
-                )}
+              {/* Password Fields */}
+              <div className="space-y-2 group">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest group-focus-within:text-premium-violet transition-colors">New Password (Auth)</label>
+                <div className="relative">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300 group-focus-within:text-premium-violet transition-colors" />
+                  <input type="password" {...register('password')} placeholder="••••••••" className="premium-input w-full pl-12 pr-4 py-3.5 bg-slate-50 border border-slate-100 rounded-xl outline-none focus:border-premium-violet focus:ring-4 focus:ring-premium-violet/5 transition-all font-semibold" />
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100 mt-6">
+                <div className="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" {...register('is_active')} id="is_active" className="sr-only peer" />
+                  <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-premium-violet"></div>
+                  <label htmlFor="is_active" className="ml-3 text-sm font-bold text-slate-700">Account Active</label>
+                </div>
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
-              <input
-                id="is_active"
-                type="checkbox"
-                className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
-                {...register('is_active')}
-              />
-              <label htmlFor="is_active" className="text-sm font-medium text-gray-700">
-                Active user
-              </label>
-            </div>
-
-            <div className="flex items-center justify-end gap-3">
-              <button
-                type="button"
-                onClick={() => navigate(`/users/${userId}`)}
-                className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary-600 text-white hover:bg-primary-700 transition-colors disabled:opacity-50"
-              >
+            <div className="flex justify-end gap-3 pt-6 border-t border-slate-50">
+              <button type="button" onClick={() => navigate(-1)} className="px-6 py-3 font-bold text-slate-500 hover:text-slate-900 transition-colors">Discard</button>
+              <button disabled={isSubmitting} className="px-8 py-3 bg-slate-900 text-white rounded-xl font-bold flex items-center gap-2 hover:bg-slate-800 transition-all shadow-lg shadow-slate-200 disabled:opacity-50">
                 {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-                Save changes
+                Commit Changes
               </button>
             </div>
           </form>
         )}
       </div>
-    </div>
+    </MotionDiv>
   );
 };
 
