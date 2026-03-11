@@ -2,6 +2,8 @@ import { motion } from 'framer-motion';
 import { Users, Shield, Key, TrendingUp } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
 
+const MotionDiv = motion.div;
+
 const Dashboard = () => {
   const { user, getRoleNames } = useAuthStore();
 
@@ -15,7 +17,7 @@ const Dashboard = () => {
   return (
     <div>
       {/* Page Header */}
-      <motion.div
+      <MotionDiv
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         className="mb-8"
@@ -29,12 +31,12 @@ const Dashboard = () => {
             {getRoleNames().join(', ')}
           </span>
         </p>
-      </motion.div>
+      </MotionDiv>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {stats.map((stat, index) => (
-          <motion.div
+          <MotionDiv
             key={stat.name}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -50,12 +52,12 @@ const Dashboard = () => {
               </span>
             </div>
             <p className="text-sm text-gray-600">{stat.name}</p>
-          </motion.div>
+          </MotionDiv>
         ))}
       </div>
 
       {/* Quick Actions */}
-      <motion.div
+      <MotionDiv
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.4 }}
@@ -63,7 +65,7 @@ const Dashboard = () => {
       >
         <h2 className="text-xl font-bold text-gray-900 mb-4">Quick Actions</h2>
         <p className="text-gray-600">Dashboard content will appear here...</p>
-      </motion.div>
+      </MotionDiv>
     </div>
   );
 };

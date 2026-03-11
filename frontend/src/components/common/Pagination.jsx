@@ -2,6 +2,8 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import PropTypes from 'prop-types';
 import { motion } from 'framer-motion';
 
+const MotionButton = motion.button;
+
 const Pagination = ({ currentPage, lastPage, total, perPage, onPageChange }) => {
   const pages = [];
   const maxPagesToShow = 5;
@@ -85,19 +87,18 @@ const Pagination = ({ currentPage, lastPage, total, perPage, onPageChange }) => 
 
             {/* Page Numbers */}
             {pages.map((page) => (
-              <motion.button
+              <MotionButton
                 key={page}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => onPageChange(page)}
-                className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
-                  currentPage === page
+                className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${currentPage === page
                     ? 'z-10 bg-primary-50 border-primary-500 text-primary-600'
                     : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
-                }`}
+                  }`}
               >
                 {page}
-              </motion.button>
+              </MotionButton>
             ))}
 
             {/* Last Page */}

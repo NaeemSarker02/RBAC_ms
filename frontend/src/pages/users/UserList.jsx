@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -19,6 +19,8 @@ import Can from '../../components/auth/Can';
 import Table from '../../components/common/Table';
 import Pagination from '../../components/common/Pagination';
 
+const MotionDiv = motion.div;
+
 const UserList = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,7 +33,7 @@ const UserList = () => {
   });
 
   // Fetch users
-  const fetchUsers = async (page = 1, search = '') => {
+  const fetchUsers = useCallback(async (page = 1, search = '') => {
     try {
       setLoading(true);
       const response = await userApi.getUsers({
@@ -42,24 +44,25 @@ const UserList = () => {
 
       if (response.success) {
         setUsers(response.data);
-        setPagination({
+        setPagination((prev) => ({
+          ...prev,
           currentPage: response.meta.current_page,
           lastPage: response.meta.last_page,
           total: response.meta.total,
           perPage: response.meta.per_page,
-        });
+        }));
       }
     } catch (error) {
       toast.error(error.message || 'Failed to fetch users');
     } finally {
       setLoading(false);
     }
-  };
+  }, [pagination.perPage]);
 
   // Initial fetch
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [fetchUsers]);
 
   // Handle search
   const handleSearch = (e) => {
@@ -80,7 +83,7 @@ const UserList = () => {
 
     try {
       const response = await userApi.deleteUser(userId);
-      
+
       if (response.success) {
         toast.success(response.message || 'User deleted successfully');
         fetchUsers(pagination.currentPage, searchQuery);
@@ -150,11 +153,10 @@ const UserList = () => {
       header: 'Status',
       render: (user) => (
         <span
-          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-            user.is_active
+          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${user.is_active
               ? 'bg-green-100 text-green-800'
               : 'bg-red-100 text-red-800'
-          }`}
+            }`}
         >
           {user.is_active ? 'Active' : 'Inactive'}
         </span>
@@ -204,11 +206,10 @@ const UserList = () => {
           <Can permission="user_edit">
             <button
               onClick={() => handleToggleStatus(user.id, user.is_active)}
-              className={`${
-                user.is_active
+              className={`${user.is_active
                   ? 'text-gray-600 hover:text-orange-600'
                   : 'text-gray-600 hover:text-green-600'
-              } transition-colors`}
+                } transition-colors`}
               title={user.is_active ? 'Deactivate' : 'Activate'}
             >
               {user.is_active ? (
@@ -237,7 +238,7 @@ const UserList = () => {
   return (
     <div>
       {/* Page Header */}
-      <motion.div
+      <MotionDiv
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         className="mb-8"
@@ -264,10 +265,10 @@ const UserList = () => {
             </Link>
           </Can>
         </div>
-      </motion.div>
+      </MotionDiv>
 
       {/* Search and Filters */}
-      <motion.div
+      <MotionDiv
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.1 }}
@@ -303,10 +304,10 @@ const UserList = () => {
             </button>
           </form>
         </div>
-      </motion.div>
+      </MotionDiv>
 
       {/* Users Table */}
-      <motion.div
+      <MotionDiv
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2 }}
@@ -328,7 +329,7 @@ const UserList = () => {
             onPageChange={handlePageChange}
           />
         )}
-      </motion.div>
+      </MotionDiv>
     </div>
   );
 };

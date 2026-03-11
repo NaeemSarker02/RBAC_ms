@@ -1,10 +1,12 @@
 import { motion } from 'framer-motion';
 import { ShieldCheck } from 'lucide-react';
 
+const MotionDiv = motion.div;
+
 const AdminDashboard = () => {
   return (
     <div>
-      <motion.div
+      <MotionDiv
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         className="text-center py-20"
@@ -16,7 +18,7 @@ const AdminDashboard = () => {
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
           This is an exclusive admin area. Only users with Super Admin role can access this page.
         </p>
-      </motion.div>
+      </MotionDiv>
     </div>
   );
 };

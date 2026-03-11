@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion';
 import PropTypes from 'prop-types';
 
+const MotionTr = motion.tr;
+
 /**
  * Reusable Table Component
  */
@@ -39,9 +41,8 @@ const Table = ({ columns, data, isLoading = false, emptyMessage = 'No data avail
                 <th
                   key={column.key || index}
                   scope="col"
-                  className={`px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${
-                    column.className || ''
-                  }`}
+                  className={`px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider ${column.className || ''
+                    }`}
                 >
                   {column.header}
                 </th>
@@ -52,7 +53,7 @@ const Table = ({ columns, data, isLoading = false, emptyMessage = 'No data avail
           {/* Table Body */}
           <tbody className="bg-white divide-y divide-gray-200">
             {data.map((row, rowIndex) => (
-              <motion.tr
+              <MotionTr
                 key={row.id || rowIndex}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -67,7 +68,7 @@ const Table = ({ columns, data, isLoading = false, emptyMessage = 'No data avail
                     {column.render ? column.render(row) : row[column.key]}
                   </td>
                 ))}
-              </motion.tr>
+              </MotionTr>
             ))}
           </tbody>
         </table>

@@ -1,0 +1,133 @@
+RBAC Frontend – Premium UI Redesign
+Complete visual overhaul of the React + Tailwind v4 + Framer Motion frontend. Goal: dark, glassy, premium aesthetic — professional identity with vibrant accents, micro-animations, and fully responsive layout.
+
+Design Language:
+
+Theme: Dark sidebar + glassmorphism cards + luminous indigo/violet accent palette
+Typography: Inter (Google Fonts)
+Colors: Deep slate backgrounds (#0f172a, #1e293b) + vibrant indigo/violet (#6366f1, #8b5cf6) accents
+Elevation: layered shadows, glowing hover states, frosted-glass panels
+Motion: Framer Motion page transitions, staggered card entries, hover scale pulses
+Proposed Changes
+1. Global Tokens & Base CSS
+[MODIFY] 
+index.css
+Add Google Fonts (Inter) import
+Set dark base body background, CSS custom properties for accent colors
+Styled scrollbar matching dark theme
+Global focus ring style
+[MODIFY] 
+tailwind.config.js
+Extend color palette: accent (indigo/violet scale), surface (slate scale)
+Add glow box-shadow utilities
+Add glass backdrop-blur utility class
+2. Layouts
+[MODIFY] 
+AuthLayout.jsx
+Animated dark gradient background with floating orb blobs
+Centered glassmorphism card container
+Brand logo with glowing shield icon
+[MODIFY] 
+MainLayout.jsx
+Dark body background (bg-slate-950)
+Footer styled for dark theme
+3. Layout Components
+[MODIFY] 
+Navbar.jsx
+Glassmorphism navbar: dark frosted glass with border
+Glowing brand logo / wordmark
+Search bar with pill style, dark background
+Notification bell with animated badge
+User avatar pill with gradient + glow on hover
+Dropdown menus with dark glass styling
+[MODIFY] 
+Sidebar.jsx
+Deep dark sidebar (bg-slate-900)
+Active nav item: vivid indigo accent pill with left border glow
+Hover states: subtle indigo tint
+User info section: avatar with gradient ring, shrunken role pill
+Animated submenu expansion
+Logout button: red accent only on hover
+4. Common Components
+[MODIFY] 
+Table.jsx
+Dark-themed table: bg-slate-800/50 with glass border
+Header row: indigo subtle tint
+Row hover: bg-slate-700/40 with transition
+Loading skeleton state
+[MODIFY] 
+Pagination.jsx
+Dark styled pagination buttons
+Active page: indigo gradient pill
+Hover glow effects
+5. Auth Pages
+[MODIFY] 
+Login.jsx
+Inputs: dark surface with border accent on focus, glowing ring
+Submit button: full indigo gradient with animated glow shadow
+Demo credentials: glass card with monospace rows
+Link colors updated to accent
+[MODIFY] 
+Register.jsx
+Same dark-input treatment as Login
+Password strength bar (visual only, CSS-based)
+[MODIFY] 
+ForgotPassword.jsx
+Consistent with Login dark style
+6. Dashboard Pages
+[MODIFY] 
+Dashboard.jsx
+Stat cards: glassmorphism panels with gradient icon badges + glow rings
+Welcome section: gradient headline text
+Staggered entry animation
+[MODIFY] 
+AdminDashboard.jsx
+Consistent stat card style
+7. User Pages
+[MODIFY] 
+UserList.jsx
+Page header with gradient icon badge
+Search bar: dark pill input
+"Add User" button: indigo gradient with hover glow
+Avatar initials with gradient circle
+Role badges: vivid colored pills
+Status badge: glowing green/red pill
+[MODIFY] 
+UserView.jsx
+Profile card: glass panel with avatar hero section
+Info rows: icon + label + value, dark styled
+Role chips: vivid gradient
+[MODIFY] 
+UserCreate.jsx
+Form card: glass surface
+Dark inputs with glowing focus rings
+Action buttons: indigo primary, ghost cancel
+[MODIFY] 
+UserEdit.jsx
+Same pattern as UserCreate
+8. Error Pages
+[MODIFY] 
+NotFound.jsx
+[MODIFY] 
+Forbidden.jsx
+[MODIFY] 
+Unauthorized.jsx
+Dark gradient background with floating animated orbs
+Giant glowing error code number
+Accent-colored action buttons
+9. App-Level Toast Styling
+[MODIFY] 
+App.jsx
+Update Toaster options for dark glass toasts
+Verification Plan
+Manual Visual Verification
+Run dev server: cd d:\Naeem\projects\RBAC_Management_System\frontend && npm run dev
+Open browser at http://localhost:5173
+Check Login page – dark gradient bg, glass card, glowing button
+Log in → check Navbar (glassmorphism), Sidebar (dark, active states)
+Check Dashboard – stat cards with gradient icons, animations
+Navigate to Users → All Users – dark table, badges, avatar circles
+Click Add User → check form with dark inputs
+Click a user → User Detail view glass card
+Check 404 page by navigating to /nonexistent
+Resize browser to mobile width (375px) – sidebar collapses, layout is responsive

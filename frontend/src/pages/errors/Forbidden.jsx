@@ -2,55 +2,60 @@ import { Link } from 'react-router-dom';
 import { ShieldX, Home } from 'lucide-react';
 import { motion } from 'framer-motion';
 
+const MotionDiv = motion.div;
+const MotionH1 = motion.h1;
+const MotionH2 = motion.h2;
+const MotionP = motion.p;
+
 /**
  * 403 Forbidden Page
  */
 const Forbidden = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 to-orange-50 flex items-center justify-center p-4">
-      <motion.div
+      <MotionDiv
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="text-center"
       >
-        <motion.div
+        <MotionDiv
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
           className="inline-block mb-8"
         >
           <ShieldX className="w-32 h-32 text-red-500 mx-auto" strokeWidth={1.5} />
-        </motion.div>
+        </MotionDiv>
 
-        <motion.h1
+        <MotionH1
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
           className="text-6xl font-bold text-gray-900 mb-4"
         >
           403
-        </motion.h1>
+        </MotionH1>
 
-        <motion.h2
+        <MotionH2
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
           className="text-3xl font-semibold text-gray-800 mb-4"
         >
           Access Denied
-        </motion.h2>
+        </MotionH2>
 
-        <motion.p
+        <MotionP
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
           className="text-lg text-gray-600 mb-8 max-w-md mx-auto"
         >
           You don't have permission to access this resource. Please contact your administrator if you believe this is an error.
-        </motion.p>
+        </MotionP>
 
-        <motion.div
+        <MotionDiv
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
@@ -70,8 +75,8 @@ const Forbidden = () => {
           >
             Go Back
           </button>
-        </motion.div>
-      </motion.div>
+        </MotionDiv>
+      </MotionDiv>
     </div>
   );
 };

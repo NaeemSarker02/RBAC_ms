@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 
 // Auth Components
-import ProtectedRoute from './components/auth/Protectedroute';
+import ProtectedRoute from './components/auth/ProtectedRoute';
 import GuestRoute from './components/auth/GuestRoute';
 import PermissionGuard from './components/auth/PermissionGuard';
 import RoleGuard from './components/auth/RoleGuard';
@@ -14,6 +14,7 @@ import AuthLayout from './layouts/AuthLayout';
 // Auth Pages
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
+import ForgotPassword from './pages/auth/ForgotPassword';
 
 // Dashboard Pages
 import Dashboard from './pages/dashboard/Dashboard';
@@ -68,9 +69,7 @@ function App() {
           path="/login"
           element={
             <GuestRoute>
-              <AuthLayout>
-                <Login />
-              </AuthLayout>
+              <Login />
             </GuestRoute>
           }
         />
@@ -80,6 +79,16 @@ function App() {
             <GuestRoute>
               <AuthLayout>
                 <Register />
+              </AuthLayout>
+            </GuestRoute>
+          }
+        />
+        <Route
+          path="/forgot-password"
+          element={
+            <GuestRoute>
+              <AuthLayout>
+                <ForgotPassword />
               </AuthLayout>
             </GuestRoute>
           }
