@@ -101,3 +101,204 @@ Auth Store: Zustand ব্যবহার করে গ্লোবাল অথ
 Axios Interceptor: প্রতি রিকোয়েস্টে হেডার হিসেবে টোকেন পাঠানো এবং ৪০১/৪০৩ এরর হ্যান্ডেল করা।
 
 Protected Routes: PermissionGuard কম্পোনেন্ট দিয়ে রাউট এবং নির্দিষ্ট ইউজার ইন্টারফেস (UI) লক করা।
+
+
+
+# Clear caches
+php artisan optimize:clear
+
+# Generate IDE helpers
+php artisan ide-helper:generate
+php artisan ide-helper:models --nowrite
+
+# Create storage link
+php artisan storage:link
+
+# Start server
+php artisan serve
+```
+
+---
+
+## 🗂️ Project Structure
+```
+laravel-rbac-backend/
+├── app/
+│   ├── Exceptions/
+│   │   └── Handler.php ✅
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   └── Api/
+│   │   │       └── V1/
+│   │   │           ├── AuthController.php ✅
+│   │   │           └── UserController.php ✅
+│   │   ├── Middleware/
+│   │   │   ├── CheckPermission.php ✅
+│   │   │   ├── CheckRole.php ✅
+│   │   │   └── CheckActiveUser.php ✅
+│   │   ├── Requests/
+│   │   │   └── Auth/
+│   │   │       ├── RegisterRequest.php ✅
+│   │   │       └── LoginRequest.php ✅
+│   │   └── Resources/
+│   │       ├── UserResource.php ✅
+│   │       ├── RoleResource.php ✅
+│   │       └── PermissionResource.php ✅
+│   ├── Models/
+│   │   ├── User.php ✅
+│   │   ├── Role.php ✅
+│   │   └── Permission.php ✅
+│   ├── Providers/
+│   │   ├── AppServiceProvider.php
+│   │   ├── AuthServiceProvider.php ✅
+│   │   └── RepositoryServiceProvider.php ✅
+│   ├── Repositories/
+│   │   ├── Contracts/
+│   │   │   ├── RepositoryInterface.php ✅
+│   │   │   ├── UserRepositoryInterface.php ✅
+│   │   │   ├── RoleRepositoryInterface.php ✅
+│   │   │   └── PermissionRepositoryInterface.php ✅
+│   │   ├── BaseRepository.php ✅
+│   │   ├── EloquentUserRepository.php ✅
+│   │   ├── EloquentRoleRepository.php ✅
+│   │   └── EloquentPermissionRepository.php ✅
+│   ├── Services/
+│   │   ├── AuthService.php ✅
+│   │   └── PermissionService.php ✅
+│   └── Traits/
+│       └── ApiResponseTrait.php ✅
+├── bootstrap/
+│   ├── app.php ✅
+│   └── providers.php ✅
+├── config/
+│   ├── cors.php ✅
+│   └── sanctum.php ✅
+├── database/
+│   ├── migrations/
+│   │   ├── *_create_roles_table.php ✅
+│   │   ├── *_create_permissions_table.php ✅
+│   │   ├── *_update_users_table.php ✅
+│   │   ├── *_create_role_user_table.php ✅
+│   │   └── *_create_permission_role_table.php ✅
+│   └── seeders/
+│       ├── DatabaseSeeder.php
+│       └── RolePermissionSeeder.php ✅
+├── routes/
+│   ├── api.php ✅
+│   └── api_v1.php ✅
+├── .env ✅
+└── composer.json
+```
+
+---
+
+## 🎯 Test Credentials
+```
+Super Admin: superadmin@example.com / password
+Manager:     manager@example.com / password
+Editor:      editor@example.com / password
+Viewer:      viewer@example.com / password
+
+
+
+# Development Tools
+composer require --dev barryvdh/laravel-ide-helper
+composer require --dev barryvdh/laravel-debugbar
+composer require --dev laravel/telescope
+composer require --dev pestphp/pest
+composer require --dev pestphp/pest-plugin-laravel
+
+# Production Packages
+composer require predis/predis
+composer require laravel/sanctum
+composer require spatie/laravel-query-builder
+composer require spatie/laravel-permission  # Alternative to custom RBAC
+composer require league/fractal
+
+# Code Quality
+composer require --dev phpstan/phpstan
+composer require --dev laravel/pint
+composer require --dev nunomaduro/larastan
+
+
+
+
+# Start Laravel backend
+cd laravel-rbac-backend
+php artisan serve
+
+# Start React frontend (in new terminal)
+cd react-rbac-frontend
+npm run dev
+```
+
+### Test Flow:
+
+1. **Visit** `http://localhost:5173/login`
+2. **Login with:**
+   - Super Admin: `superadmin@example.com / password`
+   - Manager: `manager@example.com / password`
+   - Viewer: `viewer@example.com / password`
+
+3. **Navigate to Users:**
+   - Super Admin & Manager: See "Add User" button
+   - Viewer: No "Add User" button (permission denied)
+
+4. **Test Actions:**
+   - Super Admin: Can view, edit, delete, activate/deactivate
+   - Manager: Can view, edit (limited permissions)
+   - Viewer: Can only view
+
+5. **Test Search & Pagination:**
+   - Search for users
+   - Navigate between pages
+   - Observe smooth animations
+
+---
+
+## 📋 Complete Project Structure
+```
+react-rbac-frontend/
+├── src/
+│   ├── api/
+│   │   ├── axios.js ✅
+│   │   ├── authApi.js ✅
+│   │   └── userApi.js ✅
+│   ├── components/
+│   │   ├── auth/
+│   │   │   ├── Can.jsx ✅
+│   │   │   ├── GuestRoute.jsx ✅
+│   │   │   ├── PermissionGuard.jsx ✅
+│   │   │   ├── ProtectedRoute.jsx ✅
+│   │   │   └── RoleGuard.jsx ✅
+│   │   ├── common/
+│   │   │   ├── Pagination.jsx ✅
+│   │   │   └── Table.jsx ✅
+│   │   └── layout/
+│   │       ├── Navbar.jsx ✅
+│   │       └── Sidebar.jsx ✅
+│   ├── hooks/
+│   │   ├── useAuth.js ✅
+│   │   ├── usePermission.js ✅
+│   │   └── useRole.js ✅
+│   ├── layouts/
+│   │   ├── AuthLayout.jsx ✅
+│   │   └── MainLayout.jsx ✅
+│   ├── pages/
+│   │   ├── auth/
+│   │   │   ├── Login.jsx ✅
+│   │   │   └── Register.jsx ✅
+│   │   ├── dashboard/
+│   │   │   ├── AdminDashboard.jsx ✅
+│   │   │   └── Dashboard.jsx ✅
+│   │   ├── errors/
+│   │   │   ├── Forbidden.jsx ✅
+│   │   │   ├── NotFound.jsx ✅
+│   │   │   └── Unauthorized.jsx ✅
+│   │   └── users/
+│   │       └── UserList.jsx ✅
+│   ├── store/
+│   │   └── useAuthStore.js ✅
+│   ├── App.jsx ✅
+│   ├── main.jsx
+│   └── index.css ✅
