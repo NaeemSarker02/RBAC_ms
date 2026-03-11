@@ -197,7 +197,7 @@ const Register = () => {
                   <Loader2 className="w-5 h-5 animate-spin text-primary-400" />
                 ) : (
                   <>
-                    <span>Initialize Account</span>
+                    <span>Create Account</span>
                     <ArrowRight className="w-4 h-4" />
                   </>
                 )}

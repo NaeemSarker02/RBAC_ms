@@ -103,7 +103,7 @@ const UserList = () => {
     <motion.div initial="hidden" animate="visible" variants={containerVariants} className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">User Directory</h1>
+          <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">User Management</h1>
           <p className="text-slate-500 font-medium">Manage corporate access and identity verification</p>
         </div>
         <Can permission="user_create">

@@ -189,7 +189,7 @@ const Login = () => {
                       disabled={isLoading}
                       className="w-full mt-2 py-4 bg-slate-900 text-white rounded-2xl font-bold shadow-xl flex items-center justify-center space-x-3 disabled:opacity-70 transition-all"
                     >
-                      {isLoading ? <Loader2 className="w-5 h-5 animate-spin text-blue-400" /> : <><span>Initialize Session</span><ArrowRight className="w-4 h-4" /></>}
+                      {isLoading ? <Loader2 className="w-5 h-5 animate-spin text-blue-400" /> : <><span>LogIn</span><ArrowRight className="w-4 h-4" /></>}
                     </motion.button>
                   </form>
 
